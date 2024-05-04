@@ -1,5 +1,7 @@
 import React from 'react';
 import {ENDPOINT} from "@/lib/constants";
+import CardDetailProduct from "@/components/card/CardDetailProduct";
+import {id} from "postcss-selector-parser";
 
 export type ParamsProps= {
     params:{
@@ -7,22 +9,35 @@ export type ParamsProps= {
     };
 };
 
-// fetch to get detail page 
+// fetch to get detail page.tsx
 async function getDetailProducts(id:number){
-    const productDetail = await fetch(`https://store.istad.co/api/products/${id}`);
+    const productDetail = await fetch(`${ENDPOINT}/${id}`);
+    console.log("Detail product : ",productDetail);
     return productDetail.json();
 }
 
+
 export default async function page({params}:ParamsProps) {
     const id = params.id;
-    const detailProduct = getDetailProducts(id);
-    console.log("Here is the Data : ",detailProduct);
+    const detailProduct = await getDetailProducts(id);
+    console.log("Here is the Detail Data  : ",detailProduct);
   return (
     <main>
-        <div className='h-screen grid place-content-center'>
-            <h1>This is Detail page</h1>
-             {/*<h2>{detailProduct.name} </h2>*/}
+        {/*<div className='h-screen grid place-content-center'>*/}
+        {/*    <h1>This is Detail page.tsx :{id}</h1>*/}
+        {/*     /!*<h2>{detailProduct.name} </h2>*!/*/}
+        {/*</div>*/}
+        <div className='mt-16'>
+            <CardDetailProduct
+                id={detailProduct.id}
+                category={detailProduct.category}
+                name={detailProduct.name}
+                price={detailProduct.price}
+                image={detailProduct.image}
+            />
         </div>
+
+
     </main>
   )
 }

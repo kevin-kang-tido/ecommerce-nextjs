@@ -6,7 +6,7 @@ import CarouselComponentFetch from "@/components/layout/listProduct/CarouselComp
 
 
 export default function Home() {
-  console.log("This is home page!");
+  console.log("This is home page.tsx!");
   return (
     <main>
       <CaroselTopComponent/>

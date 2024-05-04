@@ -9,7 +9,7 @@ export const navbarItem  = [
         
     },{
         title: "About-Us",
-        path:"/about-us-page"
+        path:"/about-us"
     },
     {
         title:"My Shop",

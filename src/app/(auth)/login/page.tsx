@@ -11,7 +11,7 @@ import { FaGithub } from "react-icons/fa";
 import { FaGoogle } from "react-icons/fa";
 import { useSession, signIn, signOut } from "next-auth/react"
 import Image from "next/image";
-import { BASE_URl} from "@/lib/constants";
+import { BASE_URL} from "@/lib/constants";
 
 type ValuesType = {
     email: string;
@@ -44,7 +44,7 @@ export default function Login() {
   const handleAllSubmit = (values:ValuesType) => {
     setLoading(true);
     // fetch to domain api
-    fetch(`${BASE_URl}/api/user/login/`,{
+    fetch(`${BASE_URL}/api/user/login/`,{
       method:"POST",
       headers:{
         "Content-Type":"application/json",

@@ -10,10 +10,10 @@ export function middleware(request: NextRequest) {
 	const session = cookies.get("authjs.session-token")
 
 	if (!session) {
-		return NextResponse.redirect(new URL("/", request.url).toString());
+		return NextResponse.redirect(new URL("/login", request.url).toString());
 	}
 }
 // multiple middleware
 export const config = {
-	matcher: ["/dashboard", "/about-us-page"],
+	matcher: ["/my-shop"],
 };

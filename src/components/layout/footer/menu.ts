@@ -9,7 +9,7 @@ export const footerItem = [
 
     },{
         title: "About-Us",
-        path:"/about-us-page"
+        path:"/about-us-page.tsx"
     },
     {
         title:"My Shop",

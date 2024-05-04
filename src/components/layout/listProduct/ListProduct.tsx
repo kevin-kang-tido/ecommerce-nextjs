@@ -33,27 +33,29 @@ export default  function ListProduct() {
   console.log("Here is the products: ",products);
 
   return (
-      <main className='container w-auto mx-[260px]'>
-        <h1 className='text-center items-center font-bold text-3xl my-4'>Top Products</h1>
-        <div className='grid  grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg-grid-cols-4'>
-          {
-            products.map((product: ProductType) => {
-              return (
-                  <div key={product.id} className='col'>
+      <main>
+      <h1 className='text-center items-center font-bold text-3xl my-4'>Top Products</h1>
+             <div className='container flex items-center justify-center'>
+                <div className='grid place-content-center grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg-grid-cols-4'>
+                  {
+                    products.map((product: ProductType) => {
+                      return (
+                          <div key={product.id} className='col'>
 
-                    <CardProducts
-                        onClick={() => route.push(`/${product.id}}`)}
-                        id={product.id}
-                        category={product.category}
-                        name={product.name}
-                        price={product.price}
-                        image={product.image}
-                    />
-                  </div>
-              )
-            })
-          }
-        </div>
+                            <CardProducts
+                                onClick={() => route.push(`/${product.id}`)}
+                                id={product.id}
+                                category={product.category}
+                                name={product.name}
+                                price={product.price}
+                                image={product.image}
+                            />
+                          </div>
+                      )
+                    })
+                  }
+                </div>
+              </div>
       </main>
   )
 }
