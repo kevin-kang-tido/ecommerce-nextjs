@@ -6,13 +6,11 @@ import Image from "next/image";
 import axios from "axios";
 import {ProductType} from "@/lib/definitions";
 import {BASE_URL} from "@/lib/constants";
+import {Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure} from "@nextui-org/react";
 
 const FILE_SIZE = 1024 * 1024 * 5; // 5MB
 const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/png", "image/gif"];
 
-function functionAlert() {
-    alert("Edit Products Successfully");
-}
 
 // fix some error here
 
@@ -48,6 +46,7 @@ function EditProductForm({
     myHeaders.append("Content-Type", "application/json");
     myHeaders.append("Authorization", "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzE0NjcwNTg1LCJpYXQiOjE3MTI1MTA1ODUsImp0aSI6ImMwODU4MTFmZjNiNDRlNWU5YWUyNmQzOGI0OTNlNGYyIiwidXNlcl9pZCI6MTJ9.1FUM8l1yAQ65-TtNYD-UvUGNBrByltpGtPf1mcNhQpQ");
     myHeaders.append("Cookie", "csrftoken=ntSoeTzPXCbcUJyd4RYyQIIBQLulVNUHhpym1naPEocO7Uh46cH9pCBQ5J8u2jJT; sessionid=lt5uxhco8ur6sgu1v51bcrje4s8javez");
+
     const axiosCompatibleHeaders : {[key:string]: string} ={};
     myHeaders.forEach((value, key) => {
         axiosCompatibleHeaders[key] = value;
@@ -89,7 +88,7 @@ function EditProductForm({
         }
     };
 
-    const handleCreateProduct = async (values: any, imageData: any) => {
+    const handleEditProduct = async (values: any, imageData: any) => {
         try {
             const imageUrl = await handleSubmitToServer(imageData);
             console.log("data: ", values);
@@ -108,6 +107,7 @@ function EditProductForm({
     };
 
     const [previewImage, setPreviewImage] = useState("");
+    const {isOpen, onOpen, onOpenChange} = useDisclosure();
     return (
         <div className="w-full pt-9">
             <Formik
@@ -158,18 +158,56 @@ function EditProductForm({
                             />
                         </div>
                         <div>
-                            <button
+                            <Button
                                 type="submit"
                                 className="w-full px-4 py-3 bg-[#ED6533] text-white rounded-md"
                                 disabled={isSubmitting}
-                                onClick={() => functionAlert()}
+                                // onClick={() => functionAlert()}
+                                onPress={onOpen}
                             >
                                 Update
-                            </button>
+                            </Button>
                         </div>
                     </Form>
                 )}
             </Formik>
+            {/*// on press */}
+            <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+                <ModalContent>
+                    {(onClose) => (
+                        <>
+                            <ModalHeader className="flex flex-col gap-1">Modal Title</ModalHeader>
+                            <ModalBody>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                                    Nullam pulvinar risus non risus hendrerit venenatis.
+                                    Pellentesque sit amet hendrerit risus, sed porttitor quam.
+                                </p>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                                    Nullam pulvinar risus non risus hendrerit venenatis.
+                                    Pellentesque sit amet hendrerit risus, sed porttitor quam.
+                                </p>
+                                <p>
+                                    Magna exercitation reprehenderit magna aute tempor cupidatat consequat elit
+                                    dolor adipisicing. Mollit dolor eiusmod sunt ex incididunt cillum quis.
+                                    Velit duis sit officia eiusmod Lorem aliqua enim laboris do dolor eiusmod.
+                                    Et mollit incididunt nisi consectetur esse laborum eiusmod pariatur
+                                    proident Lorem eiusmod et. Culpa deserunt nostrud ad veniam.
+                                </p>
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button color="danger" variant="light" onPress={onClose}>
+                                    Close
+                                </Button>
+                                <Button color="primary" onPress={onClose}>
+                                    Action
+                                </Button>
+                            </ModalFooter>
+                        </>
+                    )}
+                </ModalContent>
+            </Modal>
         </div>
     );
 }

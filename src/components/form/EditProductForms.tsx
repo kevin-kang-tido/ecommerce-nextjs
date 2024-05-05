@@ -1,23 +1,11 @@
 "use client";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import React, {useEffect, useState} from "react";
+import React, { useState } from "react";
 import * as Yup from "yup";
 import Image from "next/image";
 import axios from "axios";
 import {BASE_URL} from "@/lib/constants";
-import {
-    Modal,
-    ModalContent,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-    Button,
-    useDisclosure,
-    Pagination
-} from "@nextui-org/react";
-import {useGetCategoryIconQuery, useGetProductsImageQuery, useGetProductsQuery} from "@/redux/service/ecommerce";
-import CardProductImageComponent, {imageSelect} from "@/components/card/CardProductImage";
-import {useAppSelector} from "@/redux/hooks";
+import {Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure} from "@nextui-org/react";
 
 
 const FILE_SIZE = 1024 * 1024 * 5; // 5MB
@@ -48,94 +36,55 @@ const fieldStyle = "border border-gray-300 rounded-md";
 
 
 
-const CreateProductForm = () => {
-    // const {isOpen, onOpen, onOpenChange} = useDisclosure();
-     const product = useAppSelector((state)=> state.product.product)
+const EditProductForms = () => {
+    const {isOpen, onOpen, onOpenChange} = useDisclosure();
 
-    console.log("Current Product is : ", product);
+    const myHeaders = new Headers()
+    myHeaders.append("Content-Type", "application/json");
+    myHeaders.append("Authorization", "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzE0NjcwNTg1LCJpYXQiOjE3MTI1MTA1ODUsImp0aSI6ImMwODU4MTFmZjNiNDRlNWU5YWUyNmQzOGI0OTNlNGYyIiwidXNlcl9pZCI6MTJ9.1FUM8l1yAQ65-TtNYD-UvUGNBrByltpGtPf1mcNhQpQ");
+    myHeaders.append("Cookie", "csrftoken=ntSoeTzPXCbcUJyd4RYyQIIBQLulVNUHhpym1naPEocO7Uh46cH9pCBQ5J8u2jJT; sessionid=lt5uxhco8ur6sgu1v51bcrje4s8javez");
 
-    // Model
-    const [isOpen, setIsOpen] = useState(false);
-    const [currentMode, setCurrentMode] = useState('product'); // Default to 'product'
-
-    const dataProductImage = {}; // Your data for products
-    const categoryIcon = {}; // Your data for categories
-
-    const handleOpen = () => setIsOpen(true);
-    const handleClose = () => setIsOpen(false);
-
-    const handleProductClick = () => {
-        setCurrentMode('product');
-        handleOpen(); // Open the modal
+    const handleSubmitToServer = async (values: any) => {
+        try {
+            const response = await axios.post(
+                `${BASE_URL}file/product/`,
+                values.image
+            );
+            return response.data.image;
+        } catch (error) {
+            console.log(error);
+        }
     };
 
-    const handleCategoryClick = () => {
-        setCurrentMode('category');
-        handleOpen(); // Open the modal
+    const handleCreateProduct = async (values: any, imageData: any) => {
+        try {
+            const imageUrl = await handleSubmitToServer(imageData);
+            console.log("data: ", values);
+            const postData = await fetch(`${BASE_URL}products/`, {
+                method: "POST",
+                headers: myHeaders,
+                body: JSON.stringify({
+                    ...values,
+                    image: imageUrl,
+                }),
+            });
+            console.log("post data: ", postData);
+        } catch (error) {
+            console.log(error);
+        }
     };
-    // End Model
-
-    // pagiantion
-    const onPageChange = (page: number) => setCurrentPage(page);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPage] = useState(1);
-    const [products,setProducts] = useState([]);
-
-
-    // get category icon
-    const {data:category,error:errorCategory,isFetching:isFetchingCategory} = useGetCategoryIconQuery({
-        page:1,
-        pageSide:5,
-    })
-    console.log("This is category Data : ",category);
-    // get product image
-    const {data,error,isLoading,isFetching } = useGetProductsQuery({
-        page:1,
-        pageSide:5,
-    });
-    console.log("This is Image Product: ",data);
-    console.log("error", error);
-    console.log("isLoading", isLoading);
-
-    // pagination
-    useEffect(() => {
-        const fetchData = async () => {
-            const response = await fetch(`${BASE_URL}/api/file/product/?page=${currentPage}&page_size=10`);
-            const data = await response.json();
-            console.log(data.results)
-            setProducts(data.results);
-            const totalPage = Math.ceil(data.total/10);
-            setTotalPage(totalPage); // Assuming 10 items per page
-        };
-        fetchData();
-    }, [currentPage]);
-
-    const handleNextPage = () => {
-        setCurrentPage(currentPage + 1);
-    };
-
-    const handlePrevPage = () => {
-        setCurrentPage(currentPage - 1);
-    };
-    // pagination
-    // get icon and image for redux
-
-
-
-    // handle create product
-    const handleCreteProduct = () => {
-
-    }
-
-
-
-
 
     return (
         <div className="cotainer mx-12 pt-9">
-            <Formik
-                onSubmit={() => {
 
+            <Formik
+                onSubmit={(values: any, { setSubmitting, resetForm }) => {
+                    console.log(values);
+                    const formData = new FormData();
+                    formData.append("image", values.image);
+                    handleCreateProduct(values, { image: formData });
+                    setSubmitting(false);
+                    resetForm();
                 }}
                 validationSchema={validationSchema}
                 initialValues={{
@@ -150,8 +99,9 @@ const CreateProductForm = () => {
                     quantity: null,
                 }}
             >
+                {({ isSubmitting, setFieldValue }) => (
                     <Form className="flex m-[30px] flex-col gap-4">
-                        <h1 className='text-4xl font-bold my-4'>Create Product </h1>
+                        <h1 className='text-4xl font-bold my-4'>Edit Product </h1>
                         <div className="flex flex-col gap-2">
                             <label htmlFor="name">Product Name: </label>
                             <Field
@@ -190,20 +140,19 @@ const CreateProductForm = () => {
                                 name="quantity"
                                 type="number"
                             />
-                            {/*// Preview Image selected?*/}
-                            <div className='flex my-2'>
-                               <Image width={200} height={200}  src={product.image?.image}  alt={'selected'}/>
-                            </div>
                             <div className=''>
                                 <label htmlFor="price" className='my-4 text-2xl'>Product Image: </label>
                                 <div className='flex my-2'>
-                                    <Button  onPress={handleProductClick} className='w-52 px-4 py-3 bg-[#180828] text-white rounded-md'>
+                                    <Button  onPress={onOpen} className='w-52 px-4 py-3 bg-[#180828] text-white rounded-md'>
                                         Select Product Icon
                                     </Button>
                                 </div>
+                                <ErrorMessage name="image">
+                                    {(msg) => <div className="text-danger">{msg}</div>}
+                                </ErrorMessage>
                             </div>
                         </div>
-                       <hr className='font-bold border-y-green-300'/>
+                        <hr className='font-bold border-y-green-300'/>
                         {/*create category */}
                         <h1 className='text-4xl font-bold my-4'>Create Category </h1>
                         <div className="flex flex-col gap-2">
@@ -215,72 +164,63 @@ const CreateProductForm = () => {
                                 type="text"
                             />
                         </div>
-                        {/*// Preview Image selected?*/}
-                        <div className='flex my-2'>
-                            <Image width={200} height={200}  src={product.category?.image}  alt={'selected'}/>
-                        </div>
+
                         <div className=''>
                             <label htmlFor="price" className='my-4'>category Image: </label>
                             <div className='flex my-2'>
-                                <Button onPress={handleCategoryClick}  className='w-52 px-4 py-3 bg-[#180828] text-white rounded-md'>
+                                <Button onPress={onOpen}  className='w-52 px-4 py-3 bg-[#180828] text-white rounded-md'>
                                     Select Category Icon
                                 </Button>
                             </div>
+                            <ErrorMessage name="image">
+                                {(msg) => <div className="text-danger">{msg}</div>}
+                            </ErrorMessage>
                         </div>
 
                         <div>
                             <button
                                 type="submit"
                                 className="w-52 px-4 py-3 bg-[#ED6533] text-white rounded-md"
+                                disabled={isSubmitting}
                                 onClick={() => functionAlert()}
                             >
                                 Create
                             </button>
                         </div>
                     </Form>
+                )}
             </Formik>
 
             {/*// on press */}
-            <Modal  isOpen={isOpen} onOpenChange={handleClose}>
+            <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
                 <ModalContent>
                     {(onClose) => (
                         <>
                             <ModalHeader className="flex flex-col gap-1">Modal Title</ModalHeader>
                             <ModalBody>
-                                {currentMode === 'product' && (
-                                    data.results?.map((dataProductImage:imageSelect) => (
-                                        <CardProductImageComponent
-                                            id={dataProductImage.id}
-                                            name={dataProductImage.name}
-                                            image={dataProductImage.image}
-                                            type ="product"
-                                        />
-                                    ))
-                                )}
-                                {currentMode === 'category' && (
-                                    category.results?.map((categoryImage:imageSelect) => (
-                                        <CardProductImageComponent
-                                            id={categoryImage.id}
-                                            name={categoryImage.name}
-                                            image={categoryImage.image}
-                                            type="category"
-                                        />
-
-                                    ))
-                                )}
-
-                                <div className="flex overflow-x-auto sm:justify-center my-8">
-                                    <Pagination isCompact showControls total={totalPages} initialPage={1}
-                                                page={currentPage}
-                                                onChange={onPageChange}/>
-                                </div>
-
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                                    Nullam pulvinar risus non risus hendrerit venenatis.
+                                    Pellentesque sit amet hendrerit risus, sed porttitor quam.
+                                </p>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                                    Nullam pulvinar risus non risus hendrerit venenatis.
+                                    Pellentesque sit amet hendrerit risus, sed porttitor quam.
+                                </p>
+                                <p>
+                                    Magna exercitation reprehenderit magna aute tempor cupidatat consequat elit
+                                    dolor adipisicing. Mollit dolor eiusmod sunt ex incididunt cillum quis.
+                                    Velit duis sit officia eiusmod Lorem aliqua enim laboris do dolor eiusmod.
+                                    Et mollit incididunt nisi consectetur esse laborum eiusmod pariatur
+                                    proident Lorem eiusmod et. Culpa deserunt nostrud ad veniam.
+                                </p>
                             </ModalBody>
                             <ModalFooter>
-                                <Button color="danger" variant="light" onPress={handleClose}>
+                                <Button color="danger" variant="light" onPress={onClose}>
                                     Close
                                 </Button>
-                                <Button color="primary" onPress={handleClose}>
+                                <Button color="primary" onPress={onClose}>
                                     Action
                                 </Button>
                             </ModalFooter>
@@ -292,7 +232,39 @@ const CreateProductForm = () => {
     );
 };
 
-export default CreateProductForm;
+export default EditProductForms;
 
+// custom Input
+function CustomInput({field, form, setFieldValue, ...props}: any) {
 
+    const [previewImage, setPreviewImage] = useState<string | undefined>(
+        undefined
+    );
+    const name = field.name;
+    const onChange: any = (event: any) => {
+        console.log("event:", event.currentTarget.files);
+        const file = event.currentTarget.files[0];
+        setFieldValue(name, file);
+        setPreviewImage(URL.createObjectURL(file));
+    };
 
+    return (
+        <div className="flex flex-col gap-4 justify-center">
+            <input
+                type="file"
+                onChange={onChange}
+                {...props}
+                className="border border-gray-300 rounded-md"
+            />
+            {previewImage && (
+                <Image
+                    className="rounded-md"
+                    src={previewImage}
+                    alt="preview Image"
+                    width={100}
+                    height={100}
+                />
+            )}
+        </div>
+    );
+}

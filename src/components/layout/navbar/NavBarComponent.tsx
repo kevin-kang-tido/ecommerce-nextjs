@@ -14,12 +14,13 @@ import {
 import { navbarItem } from './menu';
 import {usePathname, useRouter} from "next/navigation";
 // import { signOut, useSession } from "next-auth/react";
-import { signOut,useSession } from 'next-auth/react';
+import{ signOut,useSession } from 'next-auth/react';
 import Image from "next/image";
 import { FaCartPlus } from "react-icons/fa";
 import { FaSearch } from "react-icons/fa";
 import { useAppSelector } from "@/redux/hooks";
 import {selectProducts} from "@/redux/feature/cart/cartSlice";
+import {selectAvatar,selectBio} from "@/redux/feature/userProfile/userProfileSlice";
 
 
 
@@ -36,6 +37,11 @@ export default function NavBarComponent() {
   if(pathname === "/login" || pathname === "/register"){
     return null
   }
+
+  // show user
+  // const userAvatar = useAppSelector(selectBio);
+  // console.log("===========> user info: ",userAvatar);
+
 
   return (
     <>

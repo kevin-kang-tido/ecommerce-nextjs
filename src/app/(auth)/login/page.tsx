@@ -1,8 +1,7 @@
 'use client'
-import React, { useState } from 'react'
+import React, {useEffect, useState} from 'react'
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import email from 'next-auth/providers/email';
 import style from './style.module.css';
 import { FaEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa6";
@@ -12,6 +11,13 @@ import { FaGoogle } from "react-icons/fa";
 import { useSession, signIn, signOut } from "next-auth/react"
 import Image from "next/image";
 import { BASE_URL} from "@/lib/constants";
+import LoadingComponent from "@/app/loading";
+import {useRouter} from "next/navigation";
+import {useAppDispatch} from "@/redux/hooks";
+import {selectToken, setAccessToken} from "@/redux/feature/token/tokenSlice";
+import {fetchUserProfile} from "@/redux/feature/userProfile/userProfileSlice";
+// import {selectToken} from "@/redux/feature/token/tokenSlice";
+
 
 type ValuesType = {
     email: string;
@@ -26,47 +32,80 @@ const validationSchema = Yup.object().shape({
 const initialValues:ValuesType = {
      email:'',
      password:'',
-     
 }
 export default function Login() {
    // extracting data from usesession as session
   const { data: session } = useSession();
+  const route = useRouter();
   // loading section 
   const[loading, setLoading] = useState(false);
 
   const [showPassword,setShowPassword] = useState(false);
   const hanleShowPassword = () => {
     setShowPassword(!showPassword);
+
   }
+  const dispatch = useAppDispatch();
 
   // login to api
  // handle all submit (submit all form to an api)
-  const handleAllSubmit = (values:ValuesType) => {
-    setLoading(true);
-    // fetch to domain api
-    fetch(`${BASE_URL}/api/user/login/`,{
-      method:"POST",
-      headers:{
-        "Content-Type":"application/json",
-      },
-      body:JSON.stringify(values),
-    })
-    .then((res) => res.json())
-    .then((data) =>{
-      console.log("Here is data login: ",data);
-      setLoading(false);
-    })
-    .catch((error) =>{
-      console.log(error);
-    })
+  // const  handleAllSubmit = (values:ValuesType) => {
+  //   setLoading(true);
+  //   // fetch to domain api
+  //   fetch(`${BASE_URL}/api/user/login/`,{
+  //     method:"POST",
+  //     headers:{
+  //       "Content-Type":"application/json",
+  //     },
+  //     body:JSON.stringify(values),
+  //   })
+  //   .then((res) => res.json())
+  //   .then((data) => {
+  //     console.log("Here is data login: ",data);
+  //
+  //     setLoading(false);
+  //
+  //   })
+  //   .catch((error) =>{
+  //     console.log(error);
+  //   })
+  // }
+
+    const  handleAllSubmit = async (values:ValuesType) => {
+      const {email,password} = values;
+        setLoading(true);
+        const res = await fetch(`${BASE_URL}/api/user/login/`,{
+                 method:"POST",
+                 headers:{
+                   "Content-Type":"application/json",
+                 },
+                 body:JSON.stringify({email,password}),
+        });
+        res.json()
+            .then((data) => {
+                console.log("Here is AccessToken: ",data);
+                dispatch(setAccessToken(data.accessToken));
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+            });
+
+        console.log("=====> Page login : ",res);
+
+        if (res.status === 200) {
+            route.push("/");
+        }
   }
+    useEffect(() => {
+        dispatch(fetchUserProfile());
+    }, []);
+
+  // console.log('Here is access-token : ',setAccessToken);
 
   if(loading){
     return(
       <div className={`${style.container}`}>
-        <h1 className='text-6xl font-bold'>
-          Loading....
-        </h1>
+          <LoadingComponent></LoadingComponent>
       </div>
     )
   }
@@ -97,6 +136,9 @@ export default function Login() {
       </div>
       ) 
     }
+
+
+
   return (
     <main className={`${style.container}`}>
     <div className='bg-[#e7e5e4]  rounded-lg w-96 p-12'>
@@ -105,7 +147,7 @@ export default function Login() {
           validationSchema={validationSchema}
           onSubmit={(values,action)=>{
             handleAllSubmit(values);
-            // console.log(values);
+            console.log("Here is Values: ",values);
           }}  
     >
       <Form>
@@ -146,7 +188,9 @@ export default function Login() {
            />
         </div>
         {/* autocomplete*/}
-        <button type="submit" className={`${style.button}`}>
+        <button
+            type="submit"
+            className={`${style.button}`}>
          Login
         </button>
       </Form>

@@ -132,8 +132,9 @@ const ProductTable = () => {
                                 </DropdownItem>
                                 <DropdownItem
                                     key="edit"
-                                    onPress={() => handleEditProduct(row)}>
-                                    Edit
+                                    onClick={() => route.push('/my-shop/edit-product')}
+                                >
+                                    Edit Product
                                 </DropdownItem>
                                 <DropdownItem
                                     key="delete"

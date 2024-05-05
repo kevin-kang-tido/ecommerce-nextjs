@@ -6,6 +6,9 @@ const nextConfig = {
             "store.istad.co",
             "avatars.githubusercontent.com",
             "lh3.googleusercontent.com",
+            'robohash.org','i.pinimg.com',
+            'flowbite.s3.amazonaws.com',
+            'fakestoreapi.com',
         ]
     }    
 };

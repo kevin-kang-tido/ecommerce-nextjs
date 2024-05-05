@@ -61,4 +61,5 @@ export default userProfileSlice.reducer;
 
 // create selector
 export const selectAvatar = (state: RootState) => state.userProfile.userProfile?.avatar;
+export const selectBio = (state: RootState) => state.userProfile.userProfile?.bio;
 

@@ -11,7 +11,6 @@ async function getProduct() {
     return res.results;
 }
 
-
 export default function CarouselComponentFetch() {
     // const products = await getProduct();
     const [products,setProducts] = useState([]);
