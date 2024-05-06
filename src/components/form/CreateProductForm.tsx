@@ -13,7 +13,6 @@ import {
     ModalFooter,
     Button,
     useDisclosure,
-    Pagination
 } from "@nextui-org/react";
 import {
     useCreateProductMutation,
@@ -24,7 +23,7 @@ import {
 import CardProductImageComponent, {imageSelect} from "@/components/card/CardProductImage";
 import {useAppSelector} from "@/redux/hooks";
 import {ProductPostType} from "@/lib/definitions";
-
+import {Pagination} from "@nextui-org/react";
 
 const FILE_SIZE = 1024 * 1024 * 5; // 5MB
 const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/png", "image/gif"];
@@ -81,47 +80,26 @@ const CreateProductForm = () => {
     };
     // End Model
 
-    // pagiantion
-    const onPageChange = (page: number) => setCurrentPage(page);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPage] = useState(1);
-    const [products,setProducts] = useState([]);
 
+    // pagiantion
+    const [currentPage, setCurrentPage] = useState(1);
     // get category icon
     const {data:category,error:errorCategory,isFetching:isFetchingCategory} = useGetCategoryIconQuery({
-        page:1,
+        page:currentPage,
         pageSize:4,
     })
     console.log("This is category Data : ",category);
     // get product image
     const {data,error,isLoading,isFetching } = useGetProductsQuery({
-        page:1,
+        page:currentPage,
         pageSize:4,
     });
-
+    // Inside your component
+    useEffect(() => {
+        // This will trigger a re-fetch when currentPage changes
+    }, [currentPage]);
     const [createProduct,{data:dataCreateProduct,error:errorCreateProduct,isLoading:isLoadingCreateProduct}] = useCreateProductMutation();
 
-    
-    // pagination
-    useEffect(() => {
-        const fetchData = async () => {
-            const response = await fetch(`${BASE_URL}/api/file/product/?page=${currentPage}&page_size=10`);
-            const data = await response.json();
-            console.log(data.results)
-            setProducts(data.results);
-            const totalPage = Math.ceil(data.total/10);
-            setTotalPage(totalPage); // Assuming 10 items per page
-        };
-        fetchData();
-    }, [currentPage]);
-
-    const handleNextPage = () => {
-        setCurrentPage(currentPage + 1);
-    };
-
-    const handlePrevPage = () => {
-        setCurrentPage(currentPage - 1);
-    };
     // pagination
     // get icon and image for redux
 
@@ -286,9 +264,13 @@ const CreateProductForm = () => {
                             )}
 
                             <div className="flex overflow-x-auto sm:justify-center my-8">
-                                <Pagination isCompact showControls total={totalPages} initialPage={1}
-                                            page={currentPage}
-                                            onChange={onPageChange}/>
+                                <Pagination
+                                    isCompact
+                                    showControls
+                                    total={10}
+                                    initialPage={1}
+                                    onChange={(newPage) => setCurrentPage(newPage)}
+                                />
                             </div>
 
                         </ModalBody>

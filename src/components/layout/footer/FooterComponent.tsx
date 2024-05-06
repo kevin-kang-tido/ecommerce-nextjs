@@ -19,7 +19,8 @@ export default function FooterComponents() {
                     <div>
                         <Footer.Brand
                             href="/"
-                            // alt="eaxymark_logo"
+                            src=""
+                            alt="eaxymark_logo"
                             name="EazyMart"
                         />
                     </div>

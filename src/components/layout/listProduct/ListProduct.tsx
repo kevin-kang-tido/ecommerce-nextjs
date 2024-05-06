@@ -2,11 +2,11 @@
 import CardProducts from '@/components/card/ListCardComponent'
 import {BASE_URL, ENDPOINT} from '@/lib/constants'
 import { ProductType } from '@/lib/definitions'
-import {Pagination} from "@nextui-org/react";
+
 import React, { useEffect, useState } from "react";
 import {useRouter} from "next/navigation";
 import {useGetProductsQuery} from "@/redux/service/product";
-
+import {Pagination} from "@nextui-org/react";
 
 //Pagination
 console.log("Hello world!!!");
@@ -14,44 +14,21 @@ console.log("Hello world!!!");
 export default  function ListProduct() {
     const route = useRouter();
 
+    // Pagination
+    const [currentPage, setCurrentPage] = useState(1);
     const {data,error:errorGetAllProduct,isFetching:isFetchingGetAllProduct}  = useGetProductsQuery({
-        page:1,
+        page:currentPage,
         pageSize:12,
     });
-    console.log("This is Get All Data: ",data);
 
-  // const products = await getProduct();
-
-    // pagiantion
-    const [products,setProducts] = useState([]);
-    const onPageChange = (page: number) => setCurrentPage(page);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPage] = useState(1);
-    console.log("Here is the products: ",products);
-
-  // pagination
+// Inside your component
     useEffect(() => {
-        const fetchData = async () => {
-            const response = await fetch(`${BASE_URL}/api/products/?page=${currentPage}&page_size=10`);
-            const data = await response.json();
-            console.log(data.results)
-            setProducts(data.results);
-            const totalPage = Math.ceil(data.total/10);
-            setTotalPage(totalPage); // Assuming 10 items per page
-        };
-        fetchData();
+        // This will trigger a re-fetch when currentPage changes
     }, [currentPage]);
 
-    const handleNextPage = () => {
-        setCurrentPage(currentPage + 1);
-    };
+// end Pagination
 
-    const handlePrevPage = () => {
-        setCurrentPage(currentPage - 1);
-    };
-  // pagination
-
-  return (
+    return (
       <main>
           <h1 className='text-center items-center font-bold text-3xl my-4'>Top Products</h1>
           <div className='container flex items-center justify-center'>
@@ -75,8 +52,14 @@ export default  function ListProduct() {
               </div>
           </div>
           <div className="flex overflow-x-auto sm:justify-center my-8">
-              <Pagination isCompact showControls total={totalPages} initialPage={1} page={currentPage}
-                          onChange={onPageChange}/>
+              <Pagination
+                  isCompact
+                  showControls
+                  total={10}
+                  initialPage={1}
+                  onChange={(newPage) => setCurrentPage(newPage)}
+              />
+
           </div>
       </main>
   )
