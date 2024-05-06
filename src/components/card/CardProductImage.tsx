@@ -47,7 +47,7 @@ export default function CardProductImageComponent({id,name,image,type}:imageSele
                     <div className="flex flex-col col-span-6 top-0 md:col-span-8">
                         <div className="flex justify-between items-start">
                             <div className="flex flex-col gap-0">
-                                <h1 className="text-large font-medium mt-2 line-clamp-1">Hello {name}</h1>
+                                <h1 className="text-large font-medium mt-2 line-clamp-1">{name}</h1>
                             </div>
                         </div>
                     </div>

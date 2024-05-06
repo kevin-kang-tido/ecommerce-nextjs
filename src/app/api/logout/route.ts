@@ -3,12 +3,12 @@ import { NextResponse } from "next/server";
 
 // Create a POST request handler
 export async function POST() {
-    // Get the refresh token from the client-side cookies
+    // Get the refresh auth from the client-side cookies
     const cookieName = process.env.COOKIE_REFRESH_TOKEN_NAME || "refresh";
     const cookieStore = cookies();
     const credential = cookieStore.get(cookieName);
 
-    // If the refresh token is not found, return an error message to the client-side
+    // If the refresh auth is not found, return an error message to the client-side
     if (!credential) {
         return NextResponse.json(
             {
@@ -20,11 +20,11 @@ export async function POST() {
         );
     }
 
-    // get the refresh token value
+    // get the refresh auth value
     const refreshToken = credential.value;
 
 
-    //If refresh token exist, delete the refresh token from the client-side cookies
+    //If refresh auth exist, delete the refresh auth from the client-side cookies
     if(refreshToken){
         cookieStore.delete(cookieName)
 
@@ -38,7 +38,7 @@ export async function POST() {
         );
     }
 
-    // If the refresh token is not found, return an error message to the client-side
+    // If the refresh auth is not found, return an error message to the client-side
     return NextResponse.json(
         {
             message: "Failed to logout",

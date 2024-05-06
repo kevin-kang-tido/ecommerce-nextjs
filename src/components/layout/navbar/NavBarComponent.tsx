@@ -11,36 +11,94 @@ import {
   NavbarMenu, NavbarMenuItem
 } from "@nextui-org/react";
 // import {AcmeLogo} from "./AcmeLogo.jsx";
-import { navbarItem } from './menu';
+import {navbarItem, navbarItemPlus} from './menu';
 import {usePathname, useRouter} from "next/navigation";
 // import { signOut, useSession } from "next-auth/react";
 import{ signOut,useSession } from 'next-auth/react';
 import Image from "next/image";
 import { FaCartPlus } from "react-icons/fa";
 import { FaSearch } from "react-icons/fa";
-import { useAppSelector } from "@/redux/hooks";
+import {useAppDispatch, useAppSelector} from "@/redux/hooks";
 import {selectProducts} from "@/redux/feature/cart/cartSlice";
-import {selectAvatar,selectBio} from "@/redux/feature/userProfile/userProfileSlice";
+import {useGetUserQuery} from "@/redux/service/user";
+import {Avatar, AvatarIcon} from "@nextui-org/react";
+import {clearAccessToken, selectClearAccessToken, selectToken} from "@/redux/feature/auth/authSlice";
+import {token} from "stylis";
+import userProfileSlice from "@/redux/feature/userProfile/userProfileSlice";
 
-
+type UserDataType = {
+  userProfile: string;
+  userEmail: string;
+  userUsername: string;
+};
 
 export default function NavBarComponent() {
   // const pathname = usePathname();
   const { data: session } = useSession();
+
   const route = useRouter();
   // redux 
   const count = useAppSelector(selectProducts).length;
   // open icon
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  // get user
+  const { data: users, isSuccess, isError, error } = useGetUserQuery({});
+  console.log("Get User data: ",users);
+  console.log("Get Session data : ",session);
+
+  // clear access token
+  const dispatch = useAppDispatch();
+
+
+   let userData:UserDataType;
+
+   if(session != null){
+       userData = {
+            userProfile:session.user?.image || "",
+            userEmail:session.user?.email || "",
+            userUsername:session.user?.name || "",
+       };
+   }else if(isSuccess){
+     userData = {
+       userProfile:users.user?.image || "",
+       userEmail:users.user?.email || "",
+       userUsername:users.user?.name || "",
+     }
+   }else{
+     userData = {
+       userProfile:"",
+       userEmail:"",
+       userUsername:"",
+     }
+
+   }
+  // handle logout
+  const handleLogout = async () => {
+    fetch(process.env.NEXT_PUBLIC_API_URL_LOCAL + "/logout", {
+      method: "POST",
+      credentials: "include",
+      body: JSON.stringify({}),
+    })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log("Data from logout : ", data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    dispatch(clearAccessToken());
+    signOut();
+  };
+
+
+
+
 
   const pathname = usePathname();
   if(pathname === "/login" || pathname === "/register"){
     return null
   }
 
-  // show user
-  // const userAvatar = useAppSelector(selectBio);
-  // console.log("===========> user info: ",userAvatar);
 
 
   return (
@@ -89,22 +147,22 @@ export default function NavBarComponent() {
           </Button>
         </NavbarItem>
         <NavbarItem className="hidden lg:flex">
-          {session ? (
+          {userData ? (
             <div className='flex gap-5'>
              <Image
-                src={session.user?.image as string}
-                width={40}
+                src={userData.userProfile || "https://static.vecteezy.com/system/resources/previews/026/619/142/non_2x/default-avatar-profile-icon-of-social-media-user-photo-image-vector.jpg" }
+                width={42}
                 height={40}
-                alt=""
-                className="object-cover rounded-full"
+                alt="user_profile"
+                className="object-cover rounded-full border border-yellow-500"
               />
                <Button
                 as={Link}
-                onClick={() => signOut()}
+                onClick={() => handleLogout()}
                 className="bg-gradient-to-r from-blue-500 to-pink-400 text-white"
-                // href="/login"
                 variant="flat"
-              >
+                href="/login"
+               >
                 Sign Out
               </Button>
             </div>):(<Button  as={Link} color="primary" href="/login" variant="flat">
@@ -114,7 +172,7 @@ export default function NavBarComponent() {
         </NavbarItem>
       </NavbarContent>
       <NavbarMenu>
-        {navbarItem.map((item,index:any) => (
+        {navbarItemPlus.map((item,index:any) => (
             <NavbarMenuItem key={index}>
               <Link
                   color="foreground"

@@ -1,5 +1,5 @@
 'use client'
-import React from "react";
+import React, {useEffect} from "react";
 import {Card, CardHeader, CardBody, Image} from "@nextui-org/react";
 import { FaCartPlus } from "react-icons/fa";
 import { FaStar } from "react-icons/fa6";
@@ -13,7 +13,10 @@ import { ProductType } from "@/lib/definitions";
 export default function CardProducts({id,category,name,price,image,onClick,}:ProductType) {
   const dispatch = useAppDispatch();
   const state = useAppSelector((state) => state);
-  console.log("This is testing Global state: ",state);
+
+    useEffect(() => {
+        console.log("This is testing Global state: ",state);
+    }, [state]);
   return (
       <Card className="row m-3 w-[240px]">
         <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">

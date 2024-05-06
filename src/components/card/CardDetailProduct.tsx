@@ -11,7 +11,6 @@ import {addToCart, selectProducts} from "@/redux/feature/cart/cartSlice";
 export default function  DetailProductCard ({id,category,name,price,image,onClick,}:ProductType){
   const dispatch = useAppDispatch();
   const safeImage = image || '';
-
   return (
       <>
         <section className="my-9">

@@ -9,6 +9,8 @@ const nextConfig = {
             'robohash.org','i.pinimg.com',
             'flowbite.s3.amazonaws.com',
             'fakestoreapi.com',
+            "hips.hearstapps.com",
+            "static.vecteezy.com",
         ]
     }    
 };

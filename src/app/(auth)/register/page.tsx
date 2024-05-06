@@ -6,7 +6,8 @@ import email from 'next-auth/providers/email';
 import style from './style.module.css';
 import { FaEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa6";
-import { BASE_URl }  from"@/lib/constants";
+// import { BASE_URl }  from"@/lib/constants";
+import LoadingComponent from "@/app/loading";
 
 type ValuesType = {
     email: string;
@@ -48,7 +49,7 @@ export default function Login() {
   const handleAllSubmit = (values:ValuesType) => {
     setLoading(true);
     // fetch to domain api
-    fetch(`${BASE_URl}/api/user/register/`,{
+    fetch(process.env.NEXT_PUBLIC_API_URL + `/api/user/register/`,{
       method:"POST",
       headers:{
         "Content-Type":"application/json",
@@ -68,9 +69,7 @@ export default function Login() {
   if(loading){
     return(
       <div className={`${style.container}`}>
-        <h1 className='text-6xl font-bold'>
-          Loading....
-        </h1>
+         <LoadingComponent></LoadingComponent>
       </div>
     )
   }
@@ -81,7 +80,7 @@ export default function Login() {
           initialValues={initialValues}
           validationSchema={validationSchema}
           onSubmit={(values,action)=>{
-            // console.log(values);
+            console.log(values);
             handleAllSubmit(values);
 
           }}

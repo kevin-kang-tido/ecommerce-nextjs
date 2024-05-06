@@ -3,6 +3,8 @@ import {ENDPOINT} from "@/lib/constants";
 import CardDetailProduct from "@/components/card/CardDetailProduct";
 import {id} from "postcss-selector-parser";
 
+
+
 export type ParamsProps= {
     params:{
       id:number;
@@ -14,6 +16,17 @@ async function getDetailProducts(id:number){
     const productDetail = await fetch(`${ENDPOINT}/${id}`);
     console.log("Detail product : ",productDetail);
     return productDetail.json();
+}
+export async function generateMetadata({params}: any) {
+    const id = params.id
+    const product = await getDetailProducts(id);
+    return {
+        title: product?.title,
+        description: product.description,
+        openGraph: {
+            images: product.thumbnail,
+        },
+    }
 }
 
 
@@ -36,8 +49,6 @@ export default async function page({params}:ParamsProps) {
                 image={detailProduct.image}
             />
         </div>
-
-
     </main>
   )
 }

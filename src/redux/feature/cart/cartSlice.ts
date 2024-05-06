@@ -22,12 +22,13 @@ const initialState = {
     reducers: {
       addToCart: (state, action: PayloadAction<ProductType>) => {
         state.products.push(action.payload);
-        state.totalPrice += action.payload.price;
+        const price = parseFloat(action.payload.price.toString());
+        state.totalPrice += price;
       },
       removeFromCart: (state, action: PayloadAction<number>) => {
               // find product by id(remove product by id )
               const product = state.products.find((product) => product.id === action.payload);
-  
+
               state.totalPrice -= product?.price || 0;
   
             state.products = state.products.filter(

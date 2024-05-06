@@ -19,6 +19,7 @@ import EditProductForm from "@/components/form/EditProductForm";
 import {BASE_URL} from "@/lib/constants";
 import {ProductType} from "@/lib/definitions";
 import {useRouter} from "next/navigation";
+import {useDeleteProductMutation} from "@/redux/service/product";
 
 
 const customStyles = {
@@ -52,7 +53,7 @@ const ProductTable = () => {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const { isOpen: isOpenEdit, onOpen: onOpenEdit, onOpenChange: onOpenChangeEdit } = useDisclosure();
     const [selectedProduct, setSelectedProduct] = useState({} as ProductType);
-
+    const [deleteProduct,{data:dataDelete, error:errorDelete, isLoading:isLoadingDelete}] = useDeleteProductMutation();
     const handleDetail = (product: ProductType) => {
         setSelectedProduct(product);
         onOpen();
@@ -66,15 +67,9 @@ const ProductTable = () => {
         setSearch(e.target.value);
     };
     const handleDeleteProduct = async (productId: number) => {
-        try {
-            await fetch(`${BASE_URL}products/${productId}`, {
-                method: 'DELETE',
-            });
-            setProducts(products.filter((product:any) => product?.id !== productId));
-            setFilteredProducts(filteredProducts.filter((product:any) => product?.id !== productId));
-        } catch (error) {
-            console.error('Error deleting product:', error);
-        }
+            deleteProduct({
+                id:productId,
+               });
     };
 
     const columns: TableColumn<any>[] = [
@@ -140,7 +135,7 @@ const ProductTable = () => {
                                     key="delete"
                                     className="text-danger"
                                     color="danger"
-                                    onPress={() => handleDeleteProduct(row.id as number)}
+                                    onClick={() => handleDeleteProduct(row.id as number)}
                                 >
                                     Delete
                                 </DropdownItem>

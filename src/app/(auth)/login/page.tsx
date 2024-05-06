@@ -13,10 +13,11 @@ import Image from "next/image";
 import { BASE_URL} from "@/lib/constants";
 import LoadingComponent from "@/app/loading";
 import {useRouter} from "next/navigation";
-import {useAppDispatch} from "@/redux/hooks";
-import {selectToken, setAccessToken} from "@/redux/feature/token/tokenSlice";
-import {fetchUserProfile} from "@/redux/feature/userProfile/userProfileSlice";
-// import {selectToken} from "@/redux/feature/token/tokenSlice";
+import {useAppDispatch, useAppSelector} from "@/redux/hooks";
+import {selectToken, setAccessToken} from "@/redux/feature/auth/authSlice";
+import {fetchUserProfile, selectAvatar, selectBio} from "@/redux/feature/userProfile/userProfileSlice";
+import {useGetUserQuery} from "@/redux/service/user";
+// import {selectToken} from "@/redux/feature/auth/tokenSlice";
 
 
 type ValuesType = {
@@ -34,7 +35,7 @@ const initialValues:ValuesType = {
      password:'',
 }
 export default function Login() {
-   // extracting data from usesession as session
+   // extracting data from use session as session
   const { data: session } = useSession();
   const route = useRouter();
   // loading section 
@@ -45,62 +46,104 @@ export default function Login() {
     setShowPassword(!showPassword);
 
   }
+
+  // login
+  const accessToken = useAppSelector(selectToken);
   const dispatch = useAppDispatch();
 
-  // login to api
+
+  console.log("This is AccessToken from Redux Store : ",accessToken);
+
+  const [user,setUser] = useState(null);
+
+
+
+
+ //  login to api
  // handle all submit (submit all form to an api)
-  // const  handleAllSubmit = (values:ValuesType) => {
-  //   setLoading(true);
-  //   // fetch to domain api
-  //   fetch(`${BASE_URL}/api/user/login/`,{
-  //     method:"POST",
-  //     headers:{
-  //       "Content-Type":"application/json",
-  //     },
-  //     body:JSON.stringify(values),
-  //   })
-  //   .then((res) => res.json())
-  //   .then((data) => {
-  //     console.log("Here is data login: ",data);
+ //  const  handleSubmit = (values:ValuesType) => {
+ //    setLoading(true);
+ //    // fetch to domain api
+ //    fetch(`${BASE_URL}/api/user/login/`,{
+ //      method:"POST",
+ //      headers:{
+ //        "Content-Type":"application/json",
+ //      },
+ //      body:JSON.stringify(values),
+ //    })
+ //    .then((res) => res.json())
+ //    .then((data) => {
+ //      console.log("Here is data login: ",data);
+ //
+ //      setLoading(false);
+ //
+ //    })
+ //    .catch((error) =>{
+ //      console.log(error);
+ //    })
+ //  }
+
+  //   const  handleSubmit = async (values:ValuesType) => {
+  //     const {email,password} = values;
+  //       setLoading(true);
+  //       const res = await fetch(
+  //           `${process.env.DJANGO_API_URL}/api/user/login/`,
+  //           {
+  //                method:"POST",
+  //                headers:{
+  //                  "Content-Type":"application/json",
+  //                },
+  //                body:JSON.stringify({email,password}),
+  //       });
+  //       res.json()
+  //           .then((data) => {
+  //               setLoading(false);
+  //               console.log("data in login pge: ", data);
+  //               dispatch(setAccessToken(data.accessToken));
+  //               // console.log("Here is AccessToken: ",data);
+  //               // dispatch(setAccessToken(data.accessToken));
+  //           })
+  //           .catch((error) => {
+  //               console.error("Error:", error);
+  //           });
   //
-  //     setLoading(false);
+  //       console.log("=====> Page login : ",res);
   //
-  //   })
-  //   .catch((error) =>{
-  //     console.log(error);
-  //   })
+  //       if (res.status === 200) {
+  //           route.push("/");
+  //       }
   // }
 
-    const  handleAllSubmit = async (values:ValuesType) => {
-      const {email,password} = values;
+    const handleSubmit = (values: ValuesType) => {
         setLoading(true);
-        const res = await fetch(`${BASE_URL}/api/user/login/`,{
-                 method:"POST",
-                 headers:{
-                   "Content-Type":"application/json",
-                 },
-                 body:JSON.stringify({email,password}),
-        });
-        res.json()
+        fetch(process.env. NEXT_PUBLIC_API_URL_LOCAL+ `/login`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(values),
+        })
+            .then((res) => res.json())
             .then((data) => {
-                console.log("Here is AccessToken: ",data);
+                console.log("Here is date to login: ",data);
+                setLoading(false)
                 dispatch(setAccessToken(data.accessToken));
+                if(data.accessToken != null){
+                    route.push('/');
+                }
             })
             .catch((error) => {
-                console.error("Error:", error);
+                console.log(error);
+                setLoading(false);
             });
+    };
 
-        console.log("=====> Page login : ",res);
-
-        if (res.status === 200) {
-            route.push("/");
-        }
-  }
     useEffect(() => {
         dispatch(fetchUserProfile());
     }, []);
 
-  // console.log('Here is access-token : ',setAccessToken);
+  // console.log('Here is access-auth : ',setAccessToken);
+
 
   if(loading){
     return(
@@ -137,18 +180,16 @@ export default function Login() {
       ) 
     }
 
-
-
   return (
     <main className={`${style.container}`}>
     <div className='bg-[#e7e5e4]  rounded-lg w-96 p-12'>
-    <Formik  
+    <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
           onSubmit={(values,action)=>{
-            handleAllSubmit(values);
+            handleSubmit(values);
             console.log("Here is Values: ",values);
-          }}  
+          }}
     >
       <Form>
         <h1 className={`${style.title}`}>Login</h1>
@@ -156,7 +197,7 @@ export default function Login() {
         <div className='mb-5'>
            <label htmlFor="email"className={`${style.lable}`}>Your Email</label>
            <Field type="email" name="email" id="email" className={`${style.input}`} />
-           <ErrorMessage 
+           <ErrorMessage
                name="email"
                component="div"
                className={`${style.error}`}
@@ -166,22 +207,22 @@ export default function Login() {
         <div className='mb-5'>
            <label htmlFor="password"className={`${style.lable}`}>Password</label>
            <div className='relative'>
-              <Field 
+              <Field
               type={showPassword? "text":"password"}
                name="password"
                id="password"
                className={`${style.input}`} />
                {/* hide and show pasword */}
               {!showPassword ? <FaEyeSlash
-                 onClick={() => hanleShowPassword()} 
+                 onClick={() => hanleShowPassword()}
                  className="absolute right-2 top-3 text-lg cusor-pointer "/>
               :
-              <FaEye 
-                onClick={() => hanleShowPassword()}   
+              <FaEye
+                onClick={() => hanleShowPassword()}
                 className="absolute right-2 top-3 text-lg cusor-pointer "/>
               }
            </div>
-           <ErrorMessage 
+           <ErrorMessage
                name="password"
                component="div"
                className={`${style.error}`}
@@ -190,6 +231,7 @@ export default function Login() {
         {/* autocomplete*/}
         <button
             type="submit"
+            // onClick={() => handleSubmit}
             className={`${style.button}`}>
          Login
         </button>

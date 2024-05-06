@@ -19,17 +19,16 @@ export default function FooterComponents() {
                     <div>
                         <Footer.Brand
                             href="/"
-                            src="https://flowbite.com/docs/images/logo.svg"
-                            alt="eaxymark_logo"
+                            // alt="eaxymark_logo"
                             name="EazyMart"
                         />
                     </div>
                     <div className="grid grid-cols-2 gap-8 sm:mt-4 sm:grid-cols-3 sm:gap-6">
                         <div>
-                            <Footer.Title title="about" />
+                            <Footer.Title title="Quick Route" />
                             <Footer.LinkGroup col>
-                                <Footer.Link href="#">Flowbite</Footer.Link>
-                                <Footer.Link href="#">Tailwind CSS</Footer.Link>
+                                <Footer.Link href="/aboute-us">About Us</Footer.Link>
+                                <Footer.Link href="/policy">Policy</Footer.Link>
                             </Footer.LinkGroup>
                         </div>
                         <div>

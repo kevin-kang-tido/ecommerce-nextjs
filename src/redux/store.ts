@@ -2,8 +2,8 @@ import { configureStore } from '@reduxjs/toolkit'
 import counterSlice from './feature/counter/counterSlice'
 import cartSlice from "@/redux/feature/cart/cartSlice";
 import userProfileSlice from "@/redux/feature/userProfile/userProfileSlice";
-import tokenSlice from "@/redux/feature/token/tokenSlice";
-import {ecommerceApi} from "@/redux/service/ecommerce";
+import tokenSlice from "@/redux/feature/auth/authSlice";
+import {ecommerceApi} from "./api";
 import productSlice from "@/redux/feature/product/productSlice";
 // import cartSlice from './feature/cart/cartSlice'
 
@@ -11,7 +11,7 @@ export const makeStore = () => {
   return configureStore({
     reducer: {
       [ecommerceApi.reducerPath]: ecommerceApi.reducer,
-      accessToken:tokenSlice,
+      auth:tokenSlice,
       counter: counterSlice,
       cart:cartSlice,
       userProfile:userProfileSlice,

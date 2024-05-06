@@ -5,23 +5,22 @@ const initialState = {
     token: null as string | null,
 };
 
-const tokenSlice = createSlice({
-    name: "accessToken",
+const authSlice = createSlice({
+    name:"auth",
     initialState,
     reducers: {
         setAccessToken(state, action: PayloadAction<string> ) {
             state.token = action.payload;
         },
-        clearAccessToken(state, action: PayloadAction<string> ) {
+        clearAccessToken(state) {
             state.token = null;
         },
     },
 });
 
-export const { setAccessToken } = tokenSlice.actions;
-export default tokenSlice.reducer;
+export const { setAccessToken ,clearAccessToken} = authSlice.actions;
+export default authSlice.reducer;
 
 // customize selector for easy component access
-export const selectToken = (state: RootState) => state.accessToken.token;
-// export const selectClearToken = (state: RootState) => state.clearAccess.token;
-
+export const selectToken = (state: RootState) => state.auth.token;
+export const selectClearAccessToken = (state: RootState) => state.auth;

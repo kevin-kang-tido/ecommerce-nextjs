@@ -28,7 +28,7 @@ export function CaroselTopComponent() {
                   alt="NextUI Image with fallback"
                 />
                 <Image
-                  className='hidden  sm:flex md:flex mt-[100px] mx-2'
+                  className='hidden  md:flex mt-[100px] mx-2'
                   width={250}
                   height={300}
                   src="https://i.pinimg.com/564x/67/25/44/672544decbd951740836969fd59eed3c.jpg"
@@ -36,7 +36,7 @@ export function CaroselTopComponent() {
                   alt="NextUI Image with fallback"
                 />
                   <Image
-                  className='hidden ml-2 sm:flex md:flex'
+                  className='hidden ml-2  md:flex'
                   width={250}
                   height={300}
                   src="https://i.pinimg.com/564x/67/25/44/672544decbd951740836969fd59eed3c.jpg"

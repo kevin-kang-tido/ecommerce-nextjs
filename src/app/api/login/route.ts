@@ -1,38 +1,25 @@
 import { serialize } from "cookie";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import {useRouter} from "next/navigation";
 
-// export async function GET(req:NextRequest){
-//     console.log("=====| Login Route|=======");
-//     console.log("-> Request Header ",req.headers);
-//     return NextResponse.json({message:"Hello world!!"},{status:200});
-// }
-
-// Create a POST request handler
-export  async function POST(req: NextRequest) {
+// handle login
+export async function POST(req: NextRequest) {
     // Parse the request body to get the email and password
     const body = await req.json();
     const { email, password } = body;
-    const route = useRouter();
 
-    console.log("Email: ",email);
-    console.log("Password: ",password);
+    console.log("Email: ", email);
+    console.log("Password: ", password);
 
     // Make a POST request to the Our API
     const response = await fetch(
         `${process.env.DJANGO_API_URL}/api/user/login/`,
         {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ email, password}),
-        });
-
-    // log to see response data (we can't not log with json 2 time!)
-    // const data1 = await response.json();
-    // console.log("Data from django api: ",data1);
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password }),
+        }
+    );
 
     // If the request fails, return an error message to the client-side
     if (!response.ok) {
@@ -61,6 +48,7 @@ export  async function POST(req: NextRequest) {
         path: "/",
         sameSite: "lax", // or "strict" or "none"
     });
+
     // Return the access token and user data to the client-side
     // with the serialized refresh token as a cookie
     return NextResponse.json({
@@ -73,5 +61,3 @@ export  async function POST(req: NextRequest) {
         },
     });
 }
-
-

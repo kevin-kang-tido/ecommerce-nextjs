@@ -5,22 +5,21 @@ import { ProductType } from '@/lib/definitions'
 import {Pagination} from "@nextui-org/react";
 import React, { useEffect, useState } from "react";
 import {useRouter} from "next/navigation";
-
+import {useGetProductsQuery} from "@/redux/service/product";
 
 
 //Pagination
-async function getProduct() {
-  const data = await fetch(ENDPOINT);
-  const res = await data.json();
-  return res.results;
-}
-
-
-
 console.log("Hello world!!!");
 
 export default  function ListProduct() {
     const route = useRouter();
+
+    const {data,error:errorGetAllProduct,isFetching:isFetchingGetAllProduct}  = useGetProductsQuery({
+        page:1,
+        pageSize:12,
+    });
+    console.log("This is Get All Data: ",data);
+
   // const products = await getProduct();
 
     // pagiantion
@@ -28,11 +27,6 @@ export default  function ListProduct() {
     const onPageChange = (page: number) => setCurrentPage(page);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPage] = useState(1);
-
-    useEffect(()=> {
-        getProduct()
-            .then((data) => setProducts(data));
-    },[])
     console.log("Here is the products: ",products);
 
   // pagination
@@ -63,7 +57,7 @@ export default  function ListProduct() {
           <div className='container flex items-center justify-center'>
               <div className='grid place-content-center grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg-grid-cols-4'>
                   {
-                      products.map((product: ProductType) => {
+                      data?.results.map((product: ProductType) => {
                           return (
                               <div key={product.id} className='col'>
                                   <CardProducts
