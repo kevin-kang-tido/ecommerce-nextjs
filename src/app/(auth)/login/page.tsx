@@ -142,9 +142,6 @@ export default function Login() {
             });
     };
 
-    useEffect(() => {
-        dispatch(fetchUserProfile());
-    }, []);
 
 
 

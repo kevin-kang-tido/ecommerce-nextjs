@@ -13,6 +13,8 @@ export type ParamsProps= {
 
 // fetch to get detail page.tsx
 async function getDetailProducts(id:number){
+    // Assuming this is inside a React component or an async function
+    // const PageComponent = await import(`../../../../../src/app/service/${id}/page.js`);
     const productDetail = await fetch(`${ENDPOINT}/${id}`);
     console.log("Detail product : ",productDetail);
     return productDetail.json();
@@ -24,9 +26,10 @@ export async function generateMetadata({params}: any) {
         title: product?.title,
         description: product.description,
         openGraph: {
-            images: product.thumbnail,
+            images: product.image,
         },
     }
+
 }
 
 

@@ -264,8 +264,9 @@ const EditProductForms = () => {
                     <ModalHeader className="flex flex-col gap-1">Modal Title</ModalHeader>
                     <ModalBody>
                         {currentMode === 'product' && (
-                            data.results?.map((dataProductImage:imageSelect) => (
+                            data.results?.map((dataProductImage:imageSelect,index:number) => (
                                 <CardProductImageComponent
+                                    key={index}
                                     id={dataProductImage.id}
                                     name={dataProductImage.name}
                                     image={dataProductImage.image}
@@ -274,8 +275,9 @@ const EditProductForms = () => {
                             ))
                         )}
                         {currentMode === 'category' && (
-                            category.results?.map((categoryImage:imageSelect) => (
+                            category.results?.map((categoryImage:imageSelect,index:number) => (
                                 <CardProductImageComponent
+                                    key={index}
                                     id={categoryImage.id}
                                     name={categoryImage.name}
                                     image={categoryImage.image}
