@@ -124,27 +124,31 @@ const CreateProductForm = () => {
             validationSchema={validationSchema}
             initialValues={initialValues}
             onSubmit={async (values:any) => {
-                console.log(values);
+                console.log("Form Values:", values); // Log form values for debugging
+
                 const productPost: ProductPostType = {
                     category: {
                         name: values.categoryName,
-                        icon: product.category.image || '',
+                        icon: product.category.image || '', // Ensure this matches the expected format
                     },
                     name: values.name,
                     desc: values.desc,
-                    image: product.image.image || '',
+                    image: product.image.image || '', // Ensure this matches the expected format
                     price: values.price,
                     quantity: values.quantity,
                 };
-                // Correctly call the mutation function with the payload
-                createProduct({ newProduct: productPost }).unwrap().then((response) => {
-                    // Handle success
-                    console.log("Product is created !!!",response);
-                }).catch((error) => {
-                    // Handle error
-                    console.error(error);
-                });
+
+                // Attempt to create the product
+                try {
+                    const response = await createProduct({ newProduct: productPost }).unwrap();
+                    console.log("Product created successfully:", response); // Log success response
+                    alert("Create Products Successfully"); // Show success alert
+                } catch (error) {
+                    console.error("Error creating product:", error); // Log error details
+                    alert("Failed to create product. Please try again."); // Show error alert
+                }
             }}
+
         >
                 <Form className="flex m-[30px] flex-col gap-4">
                     <h1 className='text-4xl font-bold my-4'>Create Product </h1>

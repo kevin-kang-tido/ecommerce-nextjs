@@ -26,7 +26,7 @@ import {clearAccessToken, selectClearAccessToken, selectToken} from "@/redux/fea
 import {token} from "stylis";
 import userProfileSlice from "@/redux/feature/userProfile/userProfileSlice";
 
-type UserDataType = {
+export type UserDataType = {
   userProfile: string;
   userEmail: string;
   userUsername: string;
@@ -42,13 +42,12 @@ export default function NavBarComponent() {
   // open icon
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   // get user
-  const { data: users, isSuccess, isError, error } = useGetUserQuery({});
-  console.log("Get User data: ",users);
+  const { data:users, isSuccess, isError, error } = useGetUserQuery({});
+  console.log("Get Page data: ",users);
   console.log("Get Session data : ",session);
 
   // clear access token
   const dispatch = useAppDispatch();
-
 
    let userData:UserDataType;
 
@@ -60,9 +59,9 @@ export default function NavBarComponent() {
        };
    }else if(isSuccess){
      userData = {
-       userProfile:users.user?.image || "",
+       userProfile:users.user?.image || "https://cdn-icons-png.flaticon.com/512/10337/10337609.png",
        userEmail:users.user?.email || "",
-       userUsername:users.user?.name || "",
+       userUsername:users.user?.first_name || "",
      }
    }else{
      userData = {
@@ -70,8 +69,9 @@ export default function NavBarComponent() {
        userEmail:"",
        userUsername:"",
      }
-
    }
+
+
   // handle logout
   const handleLogout = async () => {
     fetch(process.env.NEXT_PUBLIC_API_URL_LOCAL + "/logout", {
@@ -87,11 +87,7 @@ export default function NavBarComponent() {
           console.log(error);
         });
     dispatch(clearAccessToken());
-    signOut();
   };
-
-
-
 
 
   const pathname = usePathname();
@@ -117,7 +113,7 @@ export default function NavBarComponent() {
         {navbarItem.map((item,index:any) => (
           <NavbarItem key={index}>
               <Link
-                color="foreground" 
+                color="foreground"
                 href={item.path}
                 className={`${
                   pathname === item.path && "font-bold text-blue-800"
@@ -147,32 +143,37 @@ export default function NavBarComponent() {
           </Button>
         </NavbarItem>
         <NavbarItem className="hidden lg:flex">
-          {userData ? (
-            <div className='flex gap-5'>
-             <Image
-                src={userData.userProfile || "https://static.vecteezy.com/system/resources/previews/026/619/142/non_2x/default-avatar-profile-icon-of-social-media-user-photo-image-vector.jpg" }
-                width={42}
-                height={40}
-                alt="user_profile"
-                className="object-cover rounded-full border border-yellow-500"
-              />
-               <Button
-                as={Link}
-                onClick={() => handleLogout()}
-                className="bg-gradient-to-r from-blue-500 to-pink-400 text-white"
-                variant="flat"
-                href="/login"
-               >
-                Sign Out
-              </Button>
-            </div>):(<Button  as={Link} color="primary" href="/login" variant="flat">
-              Login
-            </Button>)
+          {
+            userData && Object.values(userData).every(value => value === "")? (
+                <Button as={Link} color="primary" href="/login" variant="flat">
+                  Login
+                </Button>
+            ) : (
+                <div className='flex gap-5'>
+                  <Image
+                      src={userData.userProfile}
+                      width={42}
+                      height={40}
+                      alt="user_profile"
+                      className="object-cover rounded-full border border-yellow-500"
+                  />
+                  <Button
+                      as={Link}
+                      onClick={() => {signOut();handleLogout();}}
+                      className="bg-gradient-to-r from-blue-500 to-pink-400 text-white"
+                      variant="flat"
+                      href="/login"
+                  >
+                    Sign Out
+                  </Button>
+                </div>
+            )
           }
+
         </NavbarItem>
       </NavbarContent>
       <NavbarMenu>
-        {navbarItemPlus.map((item,index:any) => (
+        {navbarItemPlus.map((item, index: any) => (
             <NavbarMenuItem key={index}>
               <Link
                   color="foreground"

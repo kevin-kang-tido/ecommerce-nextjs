@@ -25,6 +25,7 @@ export default function CarouselComponentFetch() {
             {
                 products.map((product:ProductType) => {
                     return(
+                        <div key={product.id}>
                         <CaroselComponent
                             id={product.id}
                             category={product.category}
@@ -32,6 +33,7 @@ export default function CarouselComponentFetch() {
                             price={product.price}
                             image={product.image}
                         />
+                        </div>
                     )
                 })
             }

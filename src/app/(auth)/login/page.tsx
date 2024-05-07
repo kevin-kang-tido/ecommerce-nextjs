@@ -55,6 +55,10 @@ export default function Login() {
   console.log("This is AccessToken from Redux Store : ",accessToken);
 
   const [user,setUser] = useState(null);
+  // get user data
+    const { data:users, isSuccess, isError, error } = useGetUserQuery({});
+    console.log("Get Page data: ",users);
+    console.log("Get Session data : ",session);
 
 
 
@@ -129,7 +133,7 @@ export default function Login() {
                 setLoading(false)
                 dispatch(setAccessToken(data.accessToken));
                 if(data.accessToken != null){
-                    route.push('/');
+                    route.push('/user-page');
                 }
             })
             .catch((error) => {
@@ -142,16 +146,7 @@ export default function Login() {
         dispatch(fetchUserProfile());
     }, []);
 
-  // console.log('Here is access-auth : ',setAccessToken);
 
-
-  if(loading){
-    return(
-      <div className={`${style.container}`}>
-          <LoadingComponent></LoadingComponent>
-      </div>
-    )
-  }
 
   // checking if sessions exists
   if (session) {
@@ -164,12 +159,12 @@ export default function Login() {
           </div>
           <p className="text-2xl mb-2">Welcome <span className="font-bold">{session.user?.name}</span>. Signed In As</p>
           <p className="font-bold mb-4">{session.user?.email}</p>
-          
+
           <div className='flex justify-between'>
               <button className="bg-red-600 py-2 px-6 rounded-md" onClick={() => signOut()}>Sign out</button>
               <Button
-                as={Link} 
-                href='/' className='bg-[#0ea5e9] font-bold text-sm p-6' 
+                as={Link}
+                href='/' className='bg-[#0ea5e9] font-bold text-sm p-6'
                 variant="flat"
                 >
                   Home Page
@@ -177,7 +172,16 @@ export default function Login() {
           </div>
        </div>
       </div>
-      ) 
+      )
+    }
+
+
+    if(loading){
+        return(
+            <div className={`${style.container}`}>
+                <LoadingComponent></LoadingComponent>
+            </div>
+        )
     }
 
   return (

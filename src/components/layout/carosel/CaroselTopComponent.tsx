@@ -13,7 +13,7 @@ export function CaroselTopComponent() {
             <div className='w-full'>
               <h2 className='text-xl mx-4 sm:text-xl md:text-2xl  font-bold my-2 md:mx-[240px]'>NIKES SUMMBER</h2>
                <h4 className='text-sm mx-4 sm:text:sm md:text-xl font-bold text-[#1e293b] md:mx-[240px]'>Collections 2022</h4>
-               <p className='text-sm my-4 mx-4 md:mx-[240px]'>sneaker manufacture men's shoes soft sole breathable flying casual shoes new all-match sports running shoes men</p>
+               <p className='text-sm my-4 mx-4 md:mx-[240px]'>sneaker manufacture mens shoes soft sole breathable flying casual shoes new all-match sports running shoes men</p>
                <Button className='mx-4 md:mx-[240px]' color="primary" variant="shadow">
                 Buy Now
               </Button>

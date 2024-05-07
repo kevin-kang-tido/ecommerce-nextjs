@@ -11,6 +11,7 @@ const nextConfig = {
             'fakestoreapi.com',
             "hips.hearstapps.com",
             "static.vecteezy.com",
+            "cdn-icons-png.flaticon.com"
         ]
     }    
 };
