@@ -19,7 +19,7 @@ import {
     useCreateProductMutation,
     useGetCategoryIconQuery,
     useGetProductsImageQuery,
-    useGetProductsQuery
+    useGetProductsQuery, useUpdateProductMutation
 } from "@/redux/service/product";
 import CardProductImageComponent, {imageSelect} from "@/components/card/CardProductImage";
 import {useAppSelector} from "@/redux/hooks";
@@ -99,7 +99,6 @@ const EditProductForms = () => {
         pageSize:4,
     });
 
-    const [createProduct,{data:dataCreateProduct,error:errorCreateProduct,isLoading:isLoadingCreateProduct}] = useCreateProductMutation();
 
 
     // pagination
@@ -136,6 +135,20 @@ const EditProductForms = () => {
         fileIcon: null,
         fileProduct: null,
     };
+
+    const [createProduct,{data:dataCreateProduct,error:errorCreateProduct,isLoading:isLoadingCreateProduct}] = useCreateProductMutation();
+
+    const [updateProduct,{data:updateData,error:errorUpdate,isLoading:isLoadingUpate}] = useUpdateProductMutation();
+
+
+    const handleUpdate = async  () => {
+        updateProduct({
+            id: 898,
+            updatedProduct: {
+                name: "mr man testing testing",
+            },
+        })
+    }
 
 
 
@@ -250,9 +263,9 @@ const EditProductForms = () => {
                     <button
                         type="submit"
                         className="w-52 px-4 py-3 bg-[#ED6533] text-white rounded-md"
-                        onClick={() => functionAlert()}
+                        onClick={() => handleUpdate()}
                     >
-                        Create
+                        Update Product
                     </button>
                 </div>
             </Form>

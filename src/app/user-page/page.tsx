@@ -5,7 +5,14 @@ import Image from "next/image";
 import {Button, Link} from "@nextui-org/react";
 import {useGetUserQuery} from "@/redux/service/user";
 
+// import {selectToken} from "@/redux/feature/auth/tokenSlice";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import success = toast.success;
+
 function Page() {
+    const notify = () =>
+        success("Login Successful!!");
     // get user data
     const { data:users, isSuccess, isError, error } = useGetUserQuery({});
     console.log("Get Page data: ",users);
@@ -33,7 +40,9 @@ function Page() {
                             as={Link}
                             href='/' className='bg-[#0ea5e9] font-bold text-sm p-6'
                             variant="flat"
+                            onClick={notify}
                         >
+                            <ToastContainer className='mt-12'/>
                             Home Page
                         </Button>
 

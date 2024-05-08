@@ -18,19 +18,15 @@ export const productApi = ecommerceApi.injectEndpoints({
             query: ({ newProduct}) => ({
                 url: "/api/products/",
                 method: "POST",
-                // headers: {
-                //     "Content-Type": "application/json",
-                //     Authorization: `Bearer ${accessToken}`,
-                // },
                 body: newProduct,
             }),
         }),
         // update a product
         updateProduct: builder.mutation<
             any,
-            { id: number; updatedProduct: object; accessToken: string }
+            { id: number; updatedProduct: object}
         >({
-            query: ({ id, updatedProduct, accessToken }) => ({
+            query: ({ id, updatedProduct }) => ({
                 url: `/api/products/${id}/`,
                 method: "PATCH",
                 body: updatedProduct,

@@ -69,7 +69,7 @@ const ProductTable = () => {
     const handleDeleteProduct = async (productId: number) => {
             deleteProduct({
                 id:productId,
-               });
+           });
     };
 
     const columns: TableColumn<any>[] = [

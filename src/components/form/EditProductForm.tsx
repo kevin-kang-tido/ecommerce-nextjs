@@ -7,9 +7,11 @@ import axios from "axios";
 import {ProductType} from "@/lib/definitions";
 import {BASE_URL} from "@/lib/constants";
 import {Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure} from "@nextui-org/react";
+import {useUpdateProductMutation} from "@/redux/service/product";
 
 const FILE_SIZE = 1024 * 1024 * 5; // 5MB
 const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/png", "image/gif"];
+
 
 
 // fix some error here
@@ -34,6 +36,15 @@ const validationSchema = Yup.object().shape({
 const fieldStyle = "border border-gray-300 rounded-md";
 
 // export function EditProductForm({ title, price, image, description, qty, selectedProduct }: ProductType & { selectedProduct: { id: string } }) {
+
+
+
+
+
+
+
+
+
 
 function EditProductForm({
                              id,
@@ -162,7 +173,6 @@ function EditProductForm({
                                 type="submit"
                                 className="w-full px-4 py-3 bg-[#ED6533] text-white rounded-md"
                                 disabled={isSubmitting}
-                                // onClick={() => functionAlert()}
                                 onPress={onOpen}
                             >
                                 Update

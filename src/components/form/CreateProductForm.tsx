@@ -22,8 +22,12 @@ import {
 } from "@/redux/service/product";
 import CardProductImageComponent, {imageSelect} from "@/components/card/CardProductImage";
 import {useAppSelector} from "@/redux/hooks";
-import {ProductPostType} from "@/lib/definitions";
+import {ProductPostType, ProductType} from "@/lib/definitions";
 import {Pagination} from "@nextui-org/react";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+
 
 const FILE_SIZE = 1024 * 1024 * 5; // 5MB
 const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/png", "image/gif"];
@@ -100,19 +104,26 @@ const CreateProductForm = () => {
     }, [currentPage]);
     const [createProduct,{data:dataCreateProduct,error:errorCreateProduct,isLoading:isLoadingCreateProduct}] = useCreateProductMutation();
 
-    // pagination
-    // get icon and image for redux
 
-  const initialValues = {
+    const handleSubmit = async () => {
+        createProduct({
+            newProduct:{
+
+            }
+        })
+
+    };
+
+    const notify = () => toast.success("Product Created!");
+
+    const initialValues = {
         categoryName: "",
-        categoryIcon: "",
+        // categoryIcon: "",
         name: "",
         desc: "",
         image: "",
         price: 0,
         quantity: 0,
-        fileIcon: null,
-        fileProduct: null,
     };
 
 
@@ -123,9 +134,11 @@ const CreateProductForm = () => {
         <Formik
             validationSchema={validationSchema}
             initialValues={initialValues}
-            onSubmit={async (values:any) => {
-                console.log("Form Values:", values); // Log form values for debugging
 
+
+            onSubmit={async (values:any) => {
+                console.log("============> Form Values:", values);
+                // Log form values for debugging
                 const productPost: ProductPostType = {
                     category: {
                         name: values.categoryName,
@@ -136,19 +149,9 @@ const CreateProductForm = () => {
                     image: product.image.image || '', // Ensure this matches the expected format
                     price: values.price,
                     quantity: values.quantity,
-                };
-
-                // Attempt to create the product
-                try {
-                    const response = await createProduct({ newProduct: productPost }).unwrap();
-                    console.log("Product created successfully:", response); // Log success response
-                    alert("Create Products Successfully"); // Show success alert
-                } catch (error) {
-                    console.error("Error creating product:", error); // Log error details
-                    alert("Failed to create product. Please try again."); // Show error alert
                 }
-            }}
 
+            }}
         >
                 <Form className="flex m-[30px] flex-col gap-4">
                     <h1 className='text-4xl font-bold my-4'>Create Product </h1>
@@ -207,7 +210,7 @@ const CreateProductForm = () => {
                     {/*create category */}
                     <h1 className='text-4xl font-bold my-4'>Create Category </h1>
                     <div className="flex flex-col gap-2">
-                        <label htmlFor="name" >Category Name: </label>
+                        <label htmlFor="categoryName" >Category Name: </label>
                         <Field
                             placeholder="T-shirt"
                             className={fieldStyle}
@@ -232,8 +235,9 @@ const CreateProductForm = () => {
                         <button
                             type="submit"
                             className="w-52 px-4 py-3 bg-[#ED6533] text-white rounded-md"
-                            // onClick={() => functionAlert()}
+                            onClick={notify}
                         >
+                            <ToastContainer />
                             Create Product
                         </button>
                     </div>

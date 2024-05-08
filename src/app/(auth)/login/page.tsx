@@ -18,6 +18,10 @@ import {selectToken, setAccessToken} from "@/redux/feature/auth/authSlice";
 import {fetchUserProfile, selectAvatar, selectBio} from "@/redux/feature/userProfile/userProfileSlice";
 import {useGetUserQuery} from "@/redux/service/user";
 // import {selectToken} from "@/redux/feature/auth/tokenSlice";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import error = toast.error;
+
 
 
 type ValuesType = {
@@ -40,13 +44,11 @@ export default function Login() {
   const route = useRouter();
   // loading section 
   const[loading, setLoading] = useState(false);
-
   const [showPassword,setShowPassword] = useState(false);
   const hanleShowPassword = () => {
     setShowPassword(!showPassword);
 
   }
-
   // login
   const accessToken = useAppSelector(selectToken);
   const dispatch = useAppDispatch();
@@ -59,6 +61,9 @@ export default function Login() {
     const { data:users, isSuccess, isError, error } = useGetUserQuery({});
     console.log("Get Page data: ",users);
     console.log("Get Session data : ",session);
+
+    const notify = () => toast.error("Invalided Email and Password !");
+
 
 
 
@@ -137,7 +142,7 @@ export default function Login() {
                 }
             })
             .catch((error) => {
-                console.log(error);
+                console.log("This is Error",error);
                 setLoading(false);
             });
     };
@@ -232,8 +237,9 @@ export default function Login() {
         {/* autocomplete*/}
         <button
             type="submit"
-            // onClick={() => handleSubmit}
+            onClick={notify}
             className={`${style.button}`}>
+            <ToastContainer />
          Login
         </button>
       </Form>
